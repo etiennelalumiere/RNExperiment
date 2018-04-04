@@ -42,10 +42,23 @@ export default class MyDnD extends Component {
         console.log(rectangle)
 
         if (isInsideRectangle(point, rectangle)) {
+          const source = {
+            x: this._animatedViewMeasures.pageX,
+            y: this._animatedViewMeasures.pageY,
+            width: this._animatedViewMeasures.width,
+            height: this._animatedViewMeasures.height
+          };
+          const destination = {
+            x: this._dropZoneMeasures.pageX,
+            y: this._dropZoneMeasures.pageY,
+            width: this._dropZoneMeasures.width,
+            height: this._dropZoneMeasures.height
+          };
+
           Animated.spring(
             this.state.animation,
             {
-              toValue:{ x:0, y:0 },
+              toValue:{ ...getTransformToAlignCenters(source, destination) },
               friction: 7,
               tension: 100,
             }
@@ -89,7 +102,15 @@ export default class MyDnD extends Component {
           console.log(this._dropZoneMeasures)
         })
       },
-    100);
+      100);
+
+    setTimeout(() => {
+        this.animatedView.measure((x, y, width, height, pageX, pageY) => {
+          this._animatedViewMeasures = {x, y, width, height, pageX, pageY};
+          console.log(this._animatedViewMeasures)
+        })
+      },
+      1000);
 
   }
 
@@ -102,13 +123,21 @@ export default class MyDnD extends Component {
     };
 
     return (
+
       <Animated.View
         style={[styles.circle, animatedStyles]}
         {...this._panResponder.panHandlers}
+
       >
-        <Text style={styles.text}>Drag me!</Text>
+        <View
+          ref={view => this.animatedView = view}
+          collapsable={false}
+          style={{flex: 1, backgroundColor: 'red'}}
+        >
+          <Text style={styles.text}>Drag me!</Text>
+        </View>
       </Animated.View>
-      // </View>
+
     );
   };
 
@@ -169,6 +198,13 @@ isInsideRectangle = (point, rectangle) => {
   }
 };
 
+getTransformToAlignCenters = (source, destination) => {
+  return {
+    x: - (source.x + source.width / 2) + (destination.x + destination.width / 2),
+    y: - (source.y + source.height / 2) + (destination.y + destination.height / 2)
+  };
+}
+
 let CIRCLE_RADIUS = 36;
 let Window = Dimensions.get('window');
 let styles = StyleSheet.create({
@@ -197,6 +233,7 @@ let styles = StyleSheet.create({
     height: CIRCLE_RADIUS * 2,
     borderRadius: CIRCLE_RADIUS,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexDirection: 'row'
   }
 });
