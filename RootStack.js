@@ -4,6 +4,7 @@ import PlayerScreen from './PlayerScreen';
 import TestScreen from './TestScreen';
 import DragAndDropScreen from './DragAndDropScreen';
 import MyDnD from './MyDnD';
+import ScrollViewDND from './ScrollViewDND';
 
 export const RootStack = StackNavigator(
   {
@@ -19,11 +20,11 @@ export const RootStack = StackNavigator(
     DragAndDrop: {
       screen: DragAndDropScreen,
     },
-    MyDnD: {
-      screen: MyDnD,
+    ScrollViewDND: {
+      screen: ScrollViewDND,
     }
   },
   {
-    initialRouteName: 'MyDnD',
+    initialRouteName: 'ScrollViewDND',
   }
 );
